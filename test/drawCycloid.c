@@ -4,10 +4,10 @@
 #include "raylib.h"
 #include "raymath.h"
 
-#include "cycloid.h"
+#include "../include/cycloid.h"
 
 
-int N = 5;
+int numCycles = 10;
 struct Cycloid cycloid;
 
 
@@ -24,30 +24,50 @@ Vector2 calculateNextCenter(Vector2 * center, float radius, float theta)
     return nextCenter;
 }
 
-void drawCycloid(Vector2 * center, float radius, Vector2 * outerPoint)
-{
-    DrawCircleV(*center, 5, BLACK);                     // the center points
-    DrawCircleLinesV(*center, radius, BLACK);                   // the circumferences
-    DrawLineV(*center, *outerPoint, BLACK);         // the lines connecting the centers
-}
-
 void updateTheta(struct Cycloid * cycloid)
 {
     // update the thetas using the omegas
-    for( int i = 0; i < N; i++ ) {
+    for( int i = 0; i < numCycles; i++ ) {
         // cycloid.thetas[i] += cycloid.omegas[i];
-        cycloid->thetas[i] += (0.01 * (i + 1));
+        cycloid->thetas[i] += (0.01 * (cycloid->omegas[i]));
     }
 }
 
 int main(void)
 {
-    cycloid = createCycloid(N);
-    cycloid.radius[0] = 250;
-    cycloid.radius[1] = 50;
-    cycloid.radius[2] = 75;
-    cycloid.radius[3] = 25;
-    cycloid.radius[4] = 10;
+    cycloid = createCycloid(numCycles);
+    cycloid.radius[0] = 50;
+    cycloid.radius[1] = 150;
+    cycloid.radius[2] = 105;
+    cycloid.radius[3] = 55;
+    cycloid.radius[4] = 20;
+    cycloid.radius[5] = 15;
+    cycloid.radius[6] = 1;
+    cycloid.radius[7] = 3;
+    cycloid.radius[8] = 2;
+    cycloid.radius[9] = 5;
+
+    cycloid.omegas[0] = 1.0;
+    cycloid.omegas[1] = 2.0;
+    cycloid.omegas[2] = 3.0;
+    cycloid.omegas[3] = 4.0;
+    cycloid.omegas[4] = 5.0;
+    cycloid.omegas[5] = 6.0;
+    cycloid.omegas[6] = 7.0;
+    cycloid.omegas[7] = 8.0;
+    cycloid.omegas[8] = 9.0;
+    cycloid.omegas[9] = 10.0;
+
+    cycloid.thetas[0] = -0.2;
+    cycloid.thetas[1] = 0.0;
+    cycloid.thetas[2] = 0.0;
+    cycloid.thetas[3] = -0.5;
+    cycloid.thetas[4] = 0.8;
+    cycloid.thetas[5] = 0.9;
+    cycloid.thetas[6] = -0.8;
+    cycloid.thetas[7] = 0.8;
+    cycloid.thetas[8] = 0.0;
+    cycloid.thetas[9] = 0.0;
 
 
     const int screenWidth = 1080;
@@ -66,9 +86,8 @@ int main(void)
         ClearBackground(RAYWHITE);
         DrawText("Fourier Series Project", (0.7) * screenWidth, (0.1) * screenHeight, 20, LIGHTGRAY);
 
-
         Vector2 center = {screenWidth/2, screenHeight/2};
-        for( int i = 0; i < N; i++ )
+        for( int i = 0; i < numCycles; i++ )
         {
             double theta;
             double radius;
@@ -76,9 +95,11 @@ int main(void)
 
             theta = cycloid.thetas[i];
             radius = cycloid.radius[i];
-            nextCenter = calculateNextCenter(&center, radius, theta);   // find next cycloid center
+            nextCenter = calculateNextCenter(&center, (float) radius, (float) theta);   // find next cycloid center
 
-            drawCycloid(&center, radius, &nextCenter);        // draw next cycloid
+            DrawCircleV(center, (float) (5.0 / (i + 1.0)), BLACK);                     // the center points
+            DrawCircleLinesV(center, (float) radius, BLACK);                   // the circumferences
+            DrawLineV(center, nextCenter, BLACK);         // the lines connecting the centers
 
             center = nextCenter;
         }

@@ -2,7 +2,7 @@
 // Created by Vishal Paudel on 03/04/24.
 //
 
-#include "cycloid.h"
+#include "../include/cycloid.h"
 #include "stdio.h"
 
 struct Cycloid createCycloid(int numCycles)
