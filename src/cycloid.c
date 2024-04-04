@@ -26,9 +26,9 @@ bool freeCycloid(struct Cycloid *cycloid)
 {
     printf("deallocating cycloid...\n");
 
-    free(cycloid->radius);
-    free(cycloid->thetas);
-    free(cycloid->omegas);
+    free(cycloid->radius); cycloid->radius = NULL;
+    free(cycloid->thetas); cycloid->thetas = NULL;
+    free(cycloid->omegas); cycloid->omegas = NULL;
 
     printf("deallocated cycloid...\n");
 
