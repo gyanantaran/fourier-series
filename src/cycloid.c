@@ -15,7 +15,7 @@ struct Cycloid createCycloid(int numCycles)
 
     newCycloid.radius = (double *) calloc(numCycles, sizeof(double));
     newCycloid.thetas = (double *) calloc(numCycles, sizeof(double));
-    newCycloid.omegas = (double *) calloc(numCycles, sizeof(double));
+    newCycloid.omegas = (int *) calloc(numCycles, sizeof(double));
 
     printf("allocated cycloid...\n");
 

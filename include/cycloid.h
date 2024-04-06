@@ -14,7 +14,7 @@ struct Cycloid
     double *radius;
 
     double *thetas;
-    double *omegas;
+    int *omegas;
 };
 
 struct Cycloid createCycloid(int numCycles);

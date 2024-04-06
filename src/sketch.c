@@ -9,8 +9,6 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-const int MAX_VERTICES = 1000;
-
 struct Sketch createSketch()
 {
     printf("allocating sketch...\n");
