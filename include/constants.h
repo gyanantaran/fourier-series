@@ -1,0 +1,19 @@
+//
+// Created by Vishal Paudel on 05/04/24.
+//
+
+#include "raylib.h"
+
+#ifndef FOURIER_SERIES_CONSTANTS_H
+#define FOURIER_SERIES_CONSTANTS_H
+
+#define SCREEN_HEIGHT 1000
+#define SCREEN_WIDTH  1500
+
+#define CIRCUMFERENCE_COLOR LIGHTGRAY
+
+#define BACKGROUND_COLOR BLACK
+#define PEN_COLOR RAYWHITE
+#define TEXT_COLOR LIGHTGRAY
+
+#endif //FOURIER_SERIES_CONSTANTS_H
