@@ -4,6 +4,7 @@
 #ifndef FOURIER_SERIES_CYCLOID_H
 #define FOURIER_SERIES_CYCLOID_H
 
+#include "math.h"
 #include <stdlib.h>
 #include <stdbool.h>
 
