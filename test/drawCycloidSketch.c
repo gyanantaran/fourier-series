@@ -40,22 +40,41 @@ int main(void)
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");
     SetTargetFPS(60);
 
-    Vector2 center = {(float) (SCREEN_WIDTH/2.0), (float) (SCREEN_HEIGHT/2.0)};
+    Vector2 center = {(float) (0), (float) (0)};
+    Camera2D camera;
+    camera.target = (Vector2) {0, 0};
+    camera.offset = (Vector2) {SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
+    camera.rotation = (0 * PI / 2) * (180 / PI);
+    camera.zoom = 1.0f;
+
     while (!WindowShouldClose())
     {
         // Draw
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("Fourier Series Project", (int) (0.7 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+
+        BeginMode2D(camera);
+
+        Vector2 textPos = {(0.7) * (SCREEN_WIDTH), (0.2) * (SCREEN_HEIGHT)};
+        textPos = GetScreenToWorld2D(textPos, camera);
+        DrawText("Fourier Series Project", textPos.x, textPos.y, 20, LIGHTGRAY);
+
+        Vector2 testCenter = GetMousePosition();
+        testCenter = GetScreenToWorld2D(testCenter, camera);
+        DrawCircleV(testCenter, 20, BLACK);
 
         drawCycloid(&myCycloid, center, outerPoints);
         drawSketch(&mySketch);
+
+        EndMode2D();
 
         EndDrawing();
 
         // Update
         updateCycloid(&myCycloid);
         updateSketch(&mySketch, outerPoints[outerPointToFollow]);
+
     }
     CloseWindow();
 
