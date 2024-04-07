@@ -49,20 +49,30 @@ int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");
     SetTargetFPS(60);
 
-    Vector2 center = {(float) (SCREEN_WIDTH / 2.0), (float) (SCREEN_HEIGHT / 2.0)};
+    Vector2 center = {(0), (0)};
 
+    Camera2D camera;
+    camera.target = (Vector2) {0, 0};
+    camera.offset = (Vector2) {SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
+    camera.rotation = (0 * PI / 2) * (180 / PI);
+    camera.zoom = 1.0f;
 
     while (!WindowShouldClose()) {
         // Draw
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
+
         DrawText("Fourier Series Project", (int) (0.7 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+        DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+
+        BeginMode2D(camera);
 
         if (have_sketched) {
             drawCycloid(&myCycloid, center, outerPoints);
             drawCycloidSketch(&myCycloidSketch);
         }
         drawSketch(&mySketch);
+        EndMode2D();
 
         EndDrawing();
 
@@ -71,7 +81,7 @@ int main(void) {
             updateCycloid(&myCycloid);
             updateCycloidSketch(&myCycloidSketch, outerPoints[outerPointToFollow]);
         }
-        updateSketch(&mySketch, &myCycloid, &myCycloidSketch);
+        updateSketch(&mySketch, &myCycloid, &myCycloidSketch, camera);
     }
     CloseWindow();
 
@@ -140,7 +150,7 @@ void updateCycloidSketch(struct Sketch *cycloidSketch, Vector2 center) {
     }
 }
 
-void updateSketch(struct Sketch *sketch, struct Cycloid *cycloid, struct Sketch * cycloidSketch) {
+void updateSketch(struct Sketch *sketch, struct Cycloid *cycloid, struct Sketch * cycloidSketch, Camera2D camera) {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         cycloidSketch->index = -1;
     }
@@ -148,6 +158,7 @@ void updateSketch(struct Sketch *sketch, struct Cycloid *cycloid, struct Sketch 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         Vector2 vnew;
         vnew = GetMousePosition();
+        vnew = GetScreenToWorld2D(vnew, camera);
 
         if (sketch->index < 0) {
             sketch->index = 0;
@@ -195,7 +206,6 @@ void updateSketch(struct Sketch *sketch, struct Cycloid *cycloid, struct Sketch 
 }
 
 void drawSketch(struct Sketch *sketch) {
-    DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
     if (sketch->index > 0) {
         DrawLineStrip(sketch->vertices, sketch->index + 1, PEN_COLOR);
         Vector2 vinit = sketch->vertices[0], vlatest = sketch->vertices[sketch->index];

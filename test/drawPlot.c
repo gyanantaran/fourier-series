@@ -41,21 +41,30 @@ int main(void)
     SetTargetFPS(60);
 
 
+    Vector2 center = {(float) (-1000), (float) (-1000)};
+    Camera2D camera;
+    camera.target = (Vector2) {0, 0};
+    camera.offset = (Vector2) {SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
+    camera.rotation = (0 * PI / 2) * (180 / PI);
+    camera.zoom = 1.0f;
+
     while (!WindowShouldClose())
     {
         // Update
 
         // Draw
         BeginDrawing();
-
         ClearBackground(BACKGROUND_COLOR);
+
+        BeginMode2D(camera);
+        EndMode2D();
+
         DrawText("Fourier Series Project", (0.7) * SCREEN_WIDTH, (0.1) * SCREEN_HEIGHT, 20, TEXT_COLOR);
         DrawText("Plotting Phasor Components", (0.05) * SCREEN_WIDTH, (0.1) * SCREEN_HEIGHT, 20, TEXT_COLOR);
 
         DrawText("X-component", (0.05) * SCREEN_WIDTH, (0.15) * SCREEN_HEIGHT, 20, TEXT_COLOR);
         DrawText("Y-component", (0.05) * SCREEN_WIDTH, (0.45) * SCREEN_HEIGHT, 20, TEXT_COLOR);
 
-        Vector2 center = {SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
         Vector2 CENTER = center;
         for( int i = 0; i < numCycles; i++ )
         {
@@ -77,8 +86,6 @@ int main(void)
 
             center = nextCenter;
         }
-
-        EndDrawing();
 
         // appending point in path-array
         if (mySketch.index < 0)
@@ -110,12 +117,15 @@ int main(void)
                 yplot.vertices[yplot.index] = (Vector2) {yloc.x + (ysize.x) * (yplot.index) / MAX_VERTICES, 1 * (ysize.y) * (vnew.y - CENTER.y) / SCREEN_HEIGHT + yloc.y + ysize.y / 2};
             }
         }
+
         DrawLineStrip(mySketch.vertices, mySketch.index + 1, PEN_COLOR);
         DrawLineStrip(xplot.vertices, xplot.index + 1, PEN_COLOR);
         DrawLineStrip(yplot.vertices, yplot.index + 1, PEN_COLOR);
 
         DrawRectangleLines(xloc.x, xloc.y, xsize.x, xsize.y, LIGHTGRAY);
         DrawRectangleLines(yloc.x, yloc.y, ysize.x, ysize.y, LIGHTGRAY);
+
+        EndDrawing();
 
         // update the thetas using the omegas
         for( int i = 0; i < numCycles; i++ ) {
