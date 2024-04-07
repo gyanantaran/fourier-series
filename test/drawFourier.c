@@ -3,9 +3,6 @@
 // 2024-04-06
 // Note: for bringing everything together and drawing out the fourier series expansion of a sketch
 
-// circles.c
-// author: vishalpaudel
-
 #include "raylib.h"
 #include "raymath.h"
 
@@ -23,15 +20,15 @@ void updateCycloidSketch(struct Sketch *cycloidSketch, Vector2 center);
 
 void drawCycloidSketch(struct Sketch *cycloidSketch);
 
-void updateSketch(struct Sketch *sketch, struct Cycloid *cycloid, struct Sketch * cycloidSketch);
+void updateSketch(struct Sketch *sketch, struct Cycloid *cycloid, struct Sketch * cycloidSketch, Camera2D camera);
 
 void drawSketch(struct Sketch *sketch);
 
 bool have_sketched = false;
 int main(void) {
-    int numCycles = 11;
+    int numCycles = 3;
     Vector2 *outerPoints = calloc(numCycles, sizeof(Vector2));
-    int outerPointToFollow = 10;
+    int outerPointToFollow = numCycles - 1;
 
     struct Cycloid myCycloid;
     struct Sketch myCycloidSketch;
@@ -42,11 +39,9 @@ int main(void) {
 
     myCycloid = createCycloid(numCycles);
     double radius[] = {300, 150, 75, 50, 60, 40, 45, 25, 15, 25, 10};
-    int omegas[] = {0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5};
     double thetas[] = {3, 1, 0, 1, 0, 3, 0, 0, 0, 0, 0};
     for (int i = 0; i < myCycloid.numCycles; i++) {
         myCycloid.radius[i] = radius[i];
-        myCycloid.omegas[i] = omegas[i];
         myCycloid.thetas[i] = thetas[i];
     }
 
@@ -174,8 +169,23 @@ void updateSketch(struct Sketch *sketch, struct Cycloid *cycloid, struct Sketch 
             Vector2 a_k = calculate_a(sketch, k);
 
             double radius, theta;
-            radius = sqrt((double) (a_k.x * a_k.x + a_k.y * a_k.y)) / 10;
+            radius = sqrt((double) (a_k.x * a_k.x + a_k.y * a_k.y));
             theta = atan((double) (a_k.y / a_k.x));
+            // atan() function returns the values in the range of [-pi/2, pi/2]
+
+            // arc tangent loses information
+            // need to check quadrant
+            // I OVERLOOKED THIS EARLIER and this was a MASSIVE bug
+            if (a_k.x >= 0)
+            {
+                // Quadrant 1 or Quadrant 4
+                theta = theta;
+            }
+            else if (a_k.x < 0)
+            {
+                // Quadrant 1 or Quadrant 4
+                theta = PI + theta;
+            }
 
             cycloid->radius[i] = radius;
             cycloid->thetas[i] = theta;
