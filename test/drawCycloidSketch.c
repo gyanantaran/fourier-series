@@ -1,151 +1,51 @@
-// circles.c
+// drawCycloidSketch.c
 // author: vishalpaudel
-
-#include "raylib.h"
-#include "raymath.h"
+// 2024-04-05
+// Note: To demonstrate the `Cycloid` drawn alongside with the `Sketch` of the trace of any chosen `outerPoint`
 
 #include "../include/cycloid.h"
 #include "../include/sketch.h"
-#include "../include/constants.h"
 
-
-void updateCycloid(struct Cycloid * cycloid);
-void drawCycloid(struct Cycloid * cycloid, Vector2 center, Vector2 * outerPoints);
-
-void updateSketch(struct Sketch * mySketch, Vector2 center);
-void drawSketch(struct Sketch * mySketch);
-
-int main(void)
-{
+int main(void) {
     int numCycles = 11;
-    Vector2 * outerPoints = calloc(numCycles, sizeof(Vector2));
     int outerPointToFollow = 10;
 
-    struct Cycloid myCycloid;
-    struct Sketch mySketch;
-    mySketch = createSketch();
+    struct Cycloid myCycloid = createCycloid(numCycles);
+    struct Sketch mySketch = createSketch();
 
-    myCycloid = createCycloid(numCycles);
     double radius[] = {300, 150, 75, 70, 60, 50, 45, 20, 15, 15, 1};
-    double omegas[] = {0.0, 2.0, -2.0, 4.0, -4.0, 6.0, -6.0, 8.0, -8.0, 30.0, -30.0};
-    double thetas[] = {3, 1, 0, 1, 0, 3, 0, 0, 0};
-    for (int i = 0; i < myCycloid.numCycles; i++)
-    {
-        myCycloid.radius[i] = radius[i];
-        myCycloid.omegas[i] = omegas[i];
-        myCycloid.thetas[i] = thetas[i];
-    }
-
+    for (int i = 0; i < myCycloid.numCycles; i++) myCycloid.radius[i] = radius[i];
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");
-    SetTargetFPS(60);
+    SetTargetFPS(MAX_FPS);
 
+    Camera2D camera = {
+            .target = {0, 0},
+            .offset = {SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0},
+            .rotation = 0,
+            .zoom = 1.0f
+    };
     Vector2 center = {(float) (0), (float) (0)};
-    Camera2D camera;
-    camera.target = (Vector2) {0, 0};
-    camera.offset = (Vector2) {SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
-    camera.rotation = (0 * PI / 2) * (180 / PI);
-    camera.zoom = 1.0f;
-
-    while (!WindowShouldClose())
-    {
+    while (!WindowShouldClose()) {
         // Draw
-
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(BACKGROUND_COLOR);
+        DrawText("Cycloid Sketch - Fourier Series Project", (int) (0.6 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, TEXT_COLOR);
+        DrawText(TextFormat("total elements: %d", mySketch.index + 1), (int) (0.1 * SCREEN_WIDTH), (int) (0.2 * SCREEN_HEIGHT), 20, TEXT_COLOR);
+        DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, TEXT_COLOR);
 
         BeginMode2D(camera);
-
-        Vector2 textPos = {(0.7) * (SCREEN_WIDTH), (0.2) * (SCREEN_HEIGHT)};
-        textPos = GetScreenToWorld2D(textPos, camera);
-        DrawText("Fourier Series Project", textPos.x, textPos.y, 20, LIGHTGRAY);
-
-        Vector2 testCenter = GetMousePosition();
-        testCenter = GetScreenToWorld2D(testCenter, camera);
-        DrawCircleV(testCenter, 20, BLACK);
-
-        drawCycloid(&myCycloid, center, outerPoints);
-        drawSketch(&mySketch);
-
+        drawCycloid(&myCycloid, center);
+        drawSketch(&mySketch, TRACE_COLOR);
         EndMode2D();
-
         EndDrawing();
 
         // Update
         updateCycloid(&myCycloid);
-        updateSketch(&mySketch, outerPoints[outerPointToFollow]);
-
+        updateSketch(&mySketch, myCycloid.outerPoints[outerPointToFollow]);
     }
     CloseWindow();
-
     freeCycloid(&myCycloid);
-    free(outerPoints);
-
+    freeSketch(&mySketch);
     return 0;
-}
-
-void drawCycloid(struct Cycloid * cycloid, Vector2 center, Vector2 * outerPoints)
-{
-    for( int i = 0; i < cycloid->numCycles; i++ )
-    {
-        double theta;
-        double radius;
-        Vector2 nextCenter;
-
-        theta = cycloid->thetas[i];
-        radius = cycloid->radius[i];
-
-        // calculate next center
-        Vector2 ray;
-        ray = (Vector2) {cosf((float) theta), -sinf((float) theta)};
-        ray = Vector2Scale(ray, (float) radius);
-        nextCenter = Vector2Add(center, ray);
-
-        // draw the center points
-        DrawCircleV(center, (float) (5.0 / (i + 1.0)), BLACK);
-        // draw the circumferences
-        DrawCircleLinesV(center, (float) radius, CIRCUMFERENCE_COLOR);
-        // draw the lines connecting the centers
-        DrawLineV(center, nextCenter, BLACK);
-
-        outerPoints[i] = nextCenter;
-        center = nextCenter;
-    }
-}
-
-void updateCycloid(struct Cycloid * cycloid)
-{
-    // update the thetas using the omegas
-    for( int i = 0; i < cycloid->numCycles; i++ )
-    {
-        // cycloid.thetas[i] += cycloid.omegas[i];
-        cycloid->thetas[i] += (0.01 * (cycloid->omegas[i]));
-    }
-}
-
-void drawSketch(struct Sketch * mySketch)
-{
-    DrawLineStrip(mySketch->vertices, mySketch->index + 1, BLACK);
-}
-
-void updateSketch(struct Sketch * mySketch, Vector2 center)
-{
-    // appending point in path-array
-    if (mySketch->index < 0)
-    {
-        mySketch->index = 0;
-        mySketch->vertices[mySketch->index] = center;
-    }
-    else
-    {
-        Vector2 vold, vnew;
-        vold = mySketch->vertices[mySketch->index];
-        vnew = center;
-
-        if(Vector2Distance(vold, vnew) > DELTA_VERTICES)
-        {
-            mySketch->index = (mySketch->index + 1) % MAX_VERTICES;
-            mySketch->vertices[mySketch->index] = vnew;
-        }
-    }
 }

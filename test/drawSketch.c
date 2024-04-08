@@ -1,75 +1,35 @@
-// sketch.cpp
+// drawSketch.c
 // author: vishalpaudel
-
-#include "raylib.h"
-#include "raymath.h"
+// 2024-04-04
+// Note: To demonstrate drawing figures onto the screen from the mouse
 
 #include "../include/sketch.h"
-#include "../include/constants.h"
-
-void updateSketch(struct Sketch * mySketch);
-void drawSketch(struct Sketch * mySketch);
 
 int main() {
     struct Sketch mySketch;
     mySketch = createSketch();
+    mySketch.connectFirstLast = true;
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");
     SetTargetFPS(60);
 
-
     while (!WindowShouldClose()) {
         // Update
-        updateSketch(&mySketch);
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) updateSketch(&mySketch, GetMousePosition());
 
         // Draw
         BeginDrawing();
+        ClearBackground(BACKGROUND_COLOR);
+        DrawText("Sketching - Fourier Series Project", (int) (0.6 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20,
+                 TEXT_COLOR);
+        DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, TEXT_COLOR);
+        DrawText(TextFormat("total elements: %d", mySketch.index + 1), (int) (0.1 * SCREEN_WIDTH), (int) (0.2 * SCREEN_HEIGHT), 20, TEXT_COLOR);
 
-        // {{{
-        ClearBackground(RAYWHITE);
-        DrawText("Sketching - Fourier Series Project", (int) (0.6 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
-        DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
-        // }}}
-
-        drawSketch(&mySketch);
-
+        // Draw Sketch
+        drawSketch(&mySketch, TRACE_COLOR);
         EndDrawing();
     }
     CloseWindow();
-
     freeSketch(&mySketch);
-
     return 0;
-}
-
-
-void drawSketch(struct Sketch * mySketch)
-{
-    if (mySketch->index > 0) {
-        DrawLineStrip(mySketch->vertices, mySketch->index + 1, BLACK);
-        Vector2 vinit = mySketch->vertices[0], vlatest = mySketch->vertices[mySketch->index];
-        DrawLineV(vinit, vlatest, BLACK);
-    }
-
-    if (IsKeyPressed(KEY_E)) { mySketch->index = -1; ClearBackground(RAYWHITE); }
-}
-
-void updateSketch(struct Sketch * mySketch)
-{
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-        Vector2 vnew;
-        vnew = GetMousePosition();
-
-        if (mySketch->index < 0) {
-            mySketch->index = 0;
-            mySketch->vertices[mySketch->index] = vnew;
-        } else {
-            Vector2 vold;
-            vold = mySketch->vertices[mySketch->index];
-            if (Vector2Distance(vnew, vold) > DELTA_VERTICES) {
-                mySketch->index = (mySketch->index + 1) % MAX_VERTICES;
-                mySketch->vertices[mySketch->index] = vnew;
-            }
-        }
-    }
 }
