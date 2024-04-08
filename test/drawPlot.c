@@ -16,7 +16,7 @@ Vector2 ysize = {400, 200};
 
 int main(void)
 {
-    int numCycles = 9;
+    int numCycles = 90;
     struct Cycloid myCycloid;
     struct Sketch mySketch;
     struct Sketch xplot, yplot;
@@ -26,14 +26,13 @@ int main(void)
     yplot = createSketch();
 
     myCycloid = createCycloid(numCycles);
-    double radius[] = {300, 150, 75, 70, 60, 50, 45, 20, 15, 15, 1};
-    double omegas[] = {0.0, 2.0, -2.0, 4.0, -4.0, 6.0, -6.0, 8.0, -8.0, 30.0, -30.0};
-    double thetas[] = {0, 1, 0, 1, 0, 3, 0, 0, 0};
     for (int i = 0; i < myCycloid.numCycles; i++)
     {
-        myCycloid.radius[i] = radius[i];
-        myCycloid.omegas[i] = omegas[i];
-        myCycloid.thetas[i] = thetas[i];
+        int omega = myCycloid.omegas[i];
+        if (omega > 0 && (omega % 2 == 1))
+        {
+            myCycloid.radius[i] = 1000.0 / ((float) (i + 1) * PI );
+        }
     }
 
 
@@ -41,12 +40,11 @@ int main(void)
     SetTargetFPS(60);
 
 
-    Vector2 center = {(float) (-1000), (float) (-1000)};
     Camera2D camera;
     camera.target = (Vector2) {0, 0};
-    camera.offset = (Vector2) {SCREEN_WIDTH/2, SCREEN_HEIGHT/2};
+    camera.offset = (Vector2) {SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0};
     camera.rotation = (0 * PI / 2) * (180 / PI);
-    camera.zoom = 1.0f;
+    camera.zoom = 10.0f;
 
     while (!WindowShouldClose())
     {
@@ -56,15 +54,15 @@ int main(void)
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
 
-        BeginMode2D(camera);
-        EndMode2D();
-
         DrawText("Fourier Series Project", (0.7) * SCREEN_WIDTH, (0.1) * SCREEN_HEIGHT, 20, TEXT_COLOR);
         DrawText("Plotting Phasor Components", (0.05) * SCREEN_WIDTH, (0.1) * SCREEN_HEIGHT, 20, TEXT_COLOR);
 
         DrawText("X-component", (0.05) * SCREEN_WIDTH, (0.15) * SCREEN_HEIGHT, 20, TEXT_COLOR);
         DrawText("Y-component", (0.05) * SCREEN_WIDTH, (0.45) * SCREEN_HEIGHT, 20, TEXT_COLOR);
 
+        BeginMode2D(camera);
+
+        Vector2 center = {0, 0};
         Vector2 CENTER = center;
         for( int i = 0; i < numCycles; i++ )
         {
@@ -80,12 +78,14 @@ int main(void)
             ray = Vector2Scale(ray, radius);
             nextCenter = Vector2Add(center, ray);
 
+//            center = GetScreenToWorld2D(center, camera);
             DrawCircleV(center, (float) (5.0 / (i + 1.0)), RAYWHITE);                     // the center points
             DrawCircleLinesV(center, (float) radius, CIRCUMFERENCE_COLOR);                   // the circumferences
             DrawLineV(center, nextCenter, RAYWHITE);         // the lines connecting the centers
 
             center = nextCenter;
         }
+        EndMode2D();
 
         // appending point in path-array
         if (mySketch.index < 0)
@@ -118,7 +118,13 @@ int main(void)
             }
         }
 
+        // shifting to the point's perspective
+        camera.offset = (Vector2) {SCREEN_WIDTH/2.0 - camera.zoom * mySketch.vertices[mySketch.index].x, SCREEN_HEIGHT/2.0 - camera.zoom * mySketch.vertices[mySketch.index].y};
+
+        BeginMode2D(camera);
         DrawLineStrip(mySketch.vertices, mySketch.index + 1, PEN_COLOR);
+        EndMode2D();
+
         DrawLineStrip(xplot.vertices, xplot.index + 1, PEN_COLOR);
         DrawLineStrip(yplot.vertices, yplot.index + 1, PEN_COLOR);
 

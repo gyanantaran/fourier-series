@@ -1,6 +1,7 @@
 // drawCycloid.c
 // author: vishalpaudel
 // 2024-04-04
+// Note: To demonstrate drawing Cycloid (a collection of multiple circles attached to each other)
 
 #include "../include/cycloid.h"
 
