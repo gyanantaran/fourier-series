@@ -11,69 +11,65 @@
 
 #include "../include/fourier.h"
 
-bool have_sketched = false;
-
 int main(void) {
     int numCycles = 20;
-
+    Vector2 center = (Vector2) {(0), (0)};
     struct Cycloid myCycloid;
-    struct Sketch myCycloidSketch;
     struct Sketch mySketch;
-
+    struct Sketch myCycloidSketch;
+    mySketch = createSketch(); mySketch.connectFirstLast = true;
     myCycloidSketch = createSketch();
-    mySketch = createSketch();
-    myCycloid = createCycloid(numCycles);
-
-    double radius[] = {300, 150, 75, 50, 60, 40, 45, 25, 15, 25, 10};
+    myCycloid = createCycloid(numCycles, center);
     for (int i = 0; i < myCycloid.numCycles; i++) {
-        myCycloid.radius[i] = radius[i];
+        int omega = myCycloid.omegas[i];
+        if (omega > 0 && (omega % 2 == 1)) {
+            myCycloid.radius[i] = 1000.0 / ((float) (i + 1) * PI);
+        }
     }
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");
     SetTargetFPS(60);
+    Camera2D camera = {
+            .target = {0, 0},
+            .offset = {SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0},
+            .rotation = 0,
+            .zoom = 1.0f
+    };
 
-    Vector2 center = {(0), (0)};
-
-    Camera2D camera;
-    camera.target = (Vector2) {0, 0};
-    camera.offset = (Vector2) {SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0};
-    camera.rotation = (0 * PI / 2) * (180 / PI);
-    camera.zoom = 1.0f;
-
+    bool finished_sketching = false;
     while (!WindowShouldClose()) {
+        // Update
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            finished_sketching = false;
+            updateSketch(&mySketch, GetScreenToWorld2D(GetMousePosition(), camera));
+            myCycloidSketch.index = -1;
+        } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+            finished_sketching = true;
+            updateFourier(&myCycloid, &mySketch);
+            myCycloidSketch.index = -1;
+        }
+        updateCycloid(&myCycloid);
+        updateSketch(&(myCycloidSketch), myCycloid.outerPoints[myCycloid.numCycles - 1]);
+
         // Draw
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
-
         DrawText("Fourier Series Project", (int) (0.7 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
         DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
 
         BeginMode2D(camera);
-
-        if (have_sketched) {
-            drawCycloid(&myCycloid, center);
+        drawSketch(&mySketch, TRACE_COLOR);
+        if (finished_sketching) {
+            Vector2 curPoint = myCycloidSketch.vertices[myCycloidSketch.index];
+            drawCycloid(&myCycloid);
             drawSketch(&(myCycloidSketch), TRACE_COLOR);
         }
-        drawSketch(&mySketch, TRACE_COLOR);
         EndMode2D();
         EndDrawing();
-
-        // Update
-        if (have_sketched) {
-            updateCycloid(&myCycloid);
-            updateSketch(&(myCycloidSketch), myCycloid.outerPoints[myCycloid.numCycles - 1]);
-        }
-        updateSketch(&mySketch, GetScreenToWorld2D(GetMousePosition(), camera));
-        updateFourier(&myCycloid, &mySketch);
-
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) have_sketched = false;
-        else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) have_sketched = true;
     }
     CloseWindow();
-
     freeCycloid(&myCycloid);
     freeSketch(&(myCycloidSketch));
     freeSketch(&mySketch);
-
     return 0;
 }
