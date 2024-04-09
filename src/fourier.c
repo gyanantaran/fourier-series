@@ -26,12 +26,7 @@ Vector2 sampleSketch(struct Sketch *sketch, double t) {
     // takes the index of the sketch to be a predictor of the time index
     // assumption, sampling of mouse location in the code will be in line with uniform time
 
-    // printf("started sampling a point\n");
-    // expects t \in [0, 1) range
-    // printf("MAX_TIME_POINTS is %d\n", MAX_TIME_POINTS);
-    // printf("t was %f\n", t);
-
-    double real_index = t * (sketch->index + 1);
+    double real_index = t * (sketch->index);
     // printf("real index %f\n", real_index);
     int floor_index = floor(real_index);
     int ceil_index = ceil(real_index);
