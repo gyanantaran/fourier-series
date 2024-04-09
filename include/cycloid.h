@@ -17,6 +17,7 @@
 
 struct Cycloid {
     int numCycles;
+    Vector2 center;
 
     double *radius;
 
@@ -26,11 +27,11 @@ struct Cycloid {
     Vector2 *outerPoints;
 };
 
-struct Cycloid createCycloid(int numCycles);
+struct Cycloid createCycloid(int numCycles, Vector2 center);
 
 bool freeCycloid(struct Cycloid *cycloid);
 
-void drawCycloid(struct Cycloid *cycloid, Vector2 center);
+void drawCycloid(struct Cycloid *cycloid);
 
 void updateCycloid(struct Cycloid *cycloid);
 

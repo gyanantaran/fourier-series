@@ -5,12 +5,13 @@
 
 #include "../include/cycloid.h"
 
-struct Cycloid createCycloid(int numCycles) {
+struct Cycloid createCycloid(int numCycles, Vector2 center) {
     printf("allocating cycloid...\n");
 
     struct Cycloid newCycloid;
 
     newCycloid.numCycles = numCycles;
+    newCycloid.center = center;
 
     newCycloid.radius = (double *) calloc(newCycloid.numCycles, sizeof(double));
     newCycloid.thetas = (double *) calloc(newCycloid.numCycles, sizeof(double));
@@ -51,43 +52,50 @@ bool freeCycloid(struct Cycloid *cycloid) {
     return true;
 }
 
-void drawCycloid(struct Cycloid *cycloid, Vector2 center) {
+void drawCycloid(struct Cycloid *cycloid) {
+    Vector2 center = cycloid->center;
+    DrawCircleV(center, (float) (5.0 / (0 + 1.0)), PEN_COLOR);
+
+    Vector2 prevCenter, nextCenter;
+    prevCenter = center;
     for (int i = 0; i < cycloid->numCycles; i++) {
-        double theta;
-        double radius;
-        Vector2 nextCenter;
-
-        theta = cycloid->thetas[i];
-        radius = cycloid->radius[i];
-
-        // calculate next center
-        Vector2 ray;
-        ray = (Vector2) {cosf((float) theta), -sinf((float) theta)};
-        ray = Vector2Scale(ray, (float) radius);
-        nextCenter = Vector2Add(center, ray);
+        nextCenter = cycloid->outerPoints[i];
 
         // draw the center points
-        DrawCircleV(center, (float) (5.0 / (i + 1.0)), PEN_COLOR);
+        DrawCircleV(prevCenter, (float) (5.0 / (i + 1.0)), PEN_COLOR);
         // draw the circumferences
-        DrawCircleLinesV(center, (float) radius, CIRCUMFERENCE_COLOR);
+        DrawCircleLinesV(prevCenter, (float) cycloid->radius[i], CIRCUMFERENCE_COLOR);
         // draw the lines connecting the centers
-        DrawLineV(center, nextCenter, PEN_COLOR);
+        DrawLineV(prevCenter, nextCenter, PEN_COLOR);
 
-        cycloid->outerPoints[i] = nextCenter;
-        center = nextCenter;
+        prevCenter = nextCenter;
     }
 }
 
 
-void updateCycloid(struct Cycloid * cycloid)
-{
+void updateCycloid(struct Cycloid *cycloid) {
     double SPEED = 0.01;
 
     // update the thetas using the omegas
-    for( int i = 0; i < cycloid->numCycles; i++ )
-    {
+    Vector2 previousCenter, nextCenter;
+    previousCenter = cycloid->center;
+    for (int i = 0; i < cycloid->numCycles; i++) {
         // cycloid.thetas[i] += cycloid.omegas[i];
         cycloid->thetas[i] += (SPEED * (cycloid->omegas[i]));
+
+        double theta = cycloid->thetas[i];
+        double radius = cycloid->radius[i];
+
+        // calculate next center
+        Vector2 ray;
+        ray.x = (float) (cos(theta));
+        ray.y = (float) (-1 * sin(theta));
+
+        ray = Vector2Scale(ray, (float) radius);
+        nextCenter = Vector2Add(previousCenter, ray);
+        cycloid->outerPoints[i] = nextCenter;
+
+        previousCenter = nextCenter;
     }
 }
 
