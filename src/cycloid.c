@@ -24,7 +24,6 @@ struct Cycloid createCycloid(int numCycles, Vector2 center) {
         int sign = (2 * (k % 2) - 1);
         int value = (k + 1) / 2;
         newCycloid.omegas[k] = sign * value;
-        printf("Value of omega %d\n", newCycloid.omegas[k]);
     }
 
     printf("allocated cycloid...\n");
