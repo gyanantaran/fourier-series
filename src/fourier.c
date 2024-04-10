@@ -14,8 +14,10 @@
 
 // time in seconds to complete one rotation
 const double TIME_PERIOD = 1;
+
 // granularity of data points in time
 const double DELTA_TIME = 0.0001;
+
 // the number of time points sampled everytime
 const int MAX_TIME_POINTS = (int) (TIME_PERIOD / DELTA_TIME);
 

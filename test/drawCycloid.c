@@ -8,7 +8,7 @@
 int main(void) {
     int numCycles = 9;
     struct Cycloid myCycloid;
-    myCycloid = createCycloid(numCycles);
+    myCycloid = createCycloid(numCycles, (Vector2) {SCREEN_WIDTH/2, SCREEN_HEIGHT/2});
 
     double radius[] = {250, 50, 70, 100, 20, 25, 70, 30, 20};
     for (int i = 0; i < myCycloid.numCycles; i++) myCycloid.radius[i] = radius[i];
@@ -25,7 +25,7 @@ int main(void) {
         ClearBackground(BACKGROUND_COLOR);
         DrawText("Fourier Series Project", (int) (0.7 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, TEXT_COLOR);
         // Draw the cycloid
-        drawCycloid(&myCycloid, center);
+        drawCycloid(&myCycloid);
         EndDrawing();
     }
     CloseWindow();

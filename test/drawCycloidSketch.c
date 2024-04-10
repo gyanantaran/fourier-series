@@ -10,7 +10,7 @@ int main(void) {
     int numCycles = 11;
     int outerPointToFollow = 10;
 
-    struct Cycloid myCycloid = createCycloid(numCycles);
+    struct Cycloid myCycloid = createCycloid(numCycles, (Vector2) {0, 0});
     struct Sketch mySketch = createSketch();
 
     double radius[] = {300, 150, 75, 70, 60, 50, 45, 20, 15, 15, 1};
@@ -35,7 +35,7 @@ int main(void) {
         DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, TEXT_COLOR);
 
         BeginMode2D(camera);
-        drawCycloid(&myCycloid, center);
+        drawCycloid(&myCycloid);
         drawSketch(&mySketch, TRACE_COLOR);
         EndMode2D();
         EndDrawing();

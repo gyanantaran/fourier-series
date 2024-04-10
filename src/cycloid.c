@@ -5,6 +5,8 @@
 
 #include "../include/cycloid.h"
 
+float SPEED = 0.001f;
+
 struct Cycloid createCycloid(int numCycles, Vector2 center) {
     printf("allocating cycloid...\n");
 
@@ -73,8 +75,6 @@ void drawCycloid(struct Cycloid *cycloid) {
 
 
 void updateCycloid(struct Cycloid *cycloid) {
-    double SPEED = 0.001;
-
     // update the thetas using the omegas
     Vector2 previousCenter, nextCenter;
     previousCenter = cycloid->center;

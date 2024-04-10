@@ -2,6 +2,19 @@
 
 A graphical visualiser and a browser for Fourier series expansion of arbitrary 2D Signals or Drawings!
 
+# TODO
+
+* Menu system (with blinking rectangle):
+A : Adds a new harmonic
+E : Removes the harmonic with highest frequency
+R : Reset the input signal
+Q : [Toggle] Render all harmonics
+S : [Toggle] Render input signal
+D : [Toggle] Render cycoids
+Space : [Toogle] Slow motion close up
+
+* SVG Input
+
 ## Instruction to build the project
 
 Hi! First of all, thank you for somehow landing on this page.

@@ -12,7 +12,7 @@
 #include "../include/fourier.h"
 
 int main(void) {
-    int numCycles = 90;
+    int numCycles = 100;
     Vector2 center = (Vector2) {(0), (0)};
     struct Cycloid myCycloid;
     struct Sketch mySketch;
@@ -37,7 +37,7 @@ int main(void) {
             .zoom = 1.0f
     };
 
-    Vector2 center_of_the_screen = (Vector2) {GetScreenWidth()/2.0f, GetScreenHeight()/2.0f};
+    Vector2 center_of_the_screen = (Vector2) {(float) GetScreenWidth() / 2.0f, (float) GetScreenHeight() / 2.0f};
     bool finished_sketching = false;
     bool update_camera = false;
     while (!WindowShouldClose()) {
@@ -63,7 +63,7 @@ int main(void) {
             }
         }
         if (update_camera) {
-            int N = 35;
+            int N = 10;
             // calculate average point from last `N` points
             Vector2 avgPoint = {0, 0};
             for (int d = 0; d < N; d++) {
@@ -72,7 +72,7 @@ int main(void) {
             }
             avgPoint = Vector2Scale(avgPoint, -1.0f / (float) N);
 
-            camera.zoom = 5.5f;
+            camera.zoom = 20.0f;
             avgPoint = Vector2Scale(avgPoint, camera.zoom);
             camera.offset = Vector2Add(center_of_the_screen, avgPoint);
         }
@@ -82,12 +82,12 @@ int main(void) {
         ClearBackground(BACKGROUND_COLOR);
         DrawText("Fourier Series Project", (int) (0.7 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
         DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
-        DrawText("Press SPACE to zoom-in/zoom-out", (int) (0.1 * SCREEN_WIDTH), (int) (0.2 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+        DrawText("Press SPACE to zoom-in/zoom-out", (int) (0.1 * SCREEN_WIDTH), (int) (0.2 * SCREEN_HEIGHT), 20,
+                 LIGHTGRAY);
 
         BeginMode2D(camera);
-        drawSketch(&mySketch, TRACE_COLOR);
+        drawSketch(&mySketch, BLUE);
         if (finished_sketching) {
-            Vector2 curPoint = myCycloidSketch.vertices[myCycloidSketch.index];
             drawCycloid(&myCycloid);
             drawSketch(&(myCycloidSketch), GREEN);
         }

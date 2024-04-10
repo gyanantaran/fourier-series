@@ -25,7 +25,7 @@ int main(void)
     xplot = createSketch();
     yplot = createSketch();
 
-    myCycloid = createCycloid(numCycles);
+    myCycloid = createCycloid(numCycles, (Vector2) {SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0});
     for (int i = 0; i < myCycloid.numCycles; i++)
     {
         int omega = myCycloid.omegas[i];
@@ -39,13 +39,14 @@ int main(void)
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");
     SetTargetFPS(60);
 
-
-    Camera2D camera;
-    camera.target = (Vector2) {0, 0};
-    camera.offset = (Vector2) {SCREEN_WIDTH/2.0, SCREEN_HEIGHT/2.0};
-    camera.rotation = (0 * PI / 2) * (180 / PI);
-    camera.zoom = 10.0f;
-
+    Camera2D camera = {
+            .target = {0, 0},
+            .offset = {SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0},
+            .rotation = 0,
+            .zoom = 1.0f
+    };
+    Vector2 center_of_the_screen = (Vector2) {SCREEN_WIDTH/2.0f, SCREEN_HEIGHT/2.0f};
+    bool update_camera = false;
     while (!WindowShouldClose())
     {
         // Update
@@ -78,7 +79,7 @@ int main(void)
             ray = Vector2Scale(ray, radius);
             nextCenter = Vector2Add(center, ray);
 
-//            center = GetScreenToWorld2D(center, camera);
+            center = GetScreenToWorld2D(center, camera);
             DrawCircleV(center, (float) (5.0 / (i + 1.0)), RAYWHITE);                     // the center points
             DrawCircleLinesV(center, (float) radius, CIRCUMFERENCE_COLOR);                   // the circumferences
             DrawLineV(center, nextCenter, RAYWHITE);         // the lines connecting the centers
@@ -120,6 +121,7 @@ int main(void)
 
         // shifting to the point's perspective
         camera.offset = (Vector2) {SCREEN_WIDTH/2.0 - camera.zoom * mySketch.vertices[mySketch.index].x, SCREEN_HEIGHT/2.0 - camera.zoom * mySketch.vertices[mySketch.index].y};
+
 
         BeginMode2D(camera);
         DrawLineStrip(mySketch.vertices, mySketch.index + 1, PEN_COLOR);
