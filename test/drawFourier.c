@@ -12,12 +12,13 @@
 #include "../include/fourier.h"
 
 int main(void) {
-    int numCycles = 20;
+    int numCycles = 90;
     Vector2 center = (Vector2) {(0), (0)};
     struct Cycloid myCycloid;
     struct Sketch mySketch;
     struct Sketch myCycloidSketch;
-    mySketch = createSketch(); mySketch.connectFirstLast = true;
+    mySketch = createSketch();
+    mySketch.connectFirstLast = true;
     myCycloidSketch = createSketch();
     myCycloid = createCycloid(numCycles, center);
     for (int i = 0; i < myCycloid.numCycles; i++) {
@@ -36,7 +37,9 @@ int main(void) {
             .zoom = 1.0f
     };
 
+    Vector2 center_of_the_screen = (Vector2) {GetScreenWidth()/2.0f, GetScreenHeight()/2.0f};
     bool finished_sketching = false;
+    bool update_camera = false;
     while (!WindowShouldClose()) {
         // Update
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -51,18 +54,42 @@ int main(void) {
         updateCycloid(&myCycloid);
         updateSketch(&(myCycloidSketch), myCycloid.outerPoints[myCycloid.numCycles - 1]);
 
+        // state handling
+        if (IsKeyPressed(KEY_SPACE)) {
+            update_camera = !update_camera;
+            if (!update_camera) {
+                camera.offset = center_of_the_screen;
+                camera.zoom = 1.0f;
+            }
+        }
+        if (update_camera) {
+            int N = 35;
+            // calculate average point from last `N` points
+            Vector2 avgPoint = {0, 0};
+            for (int d = 0; d < N; d++) {
+                Vector2 ith_point = myCycloidSketch.vertices[myCycloidSketch.index - d];
+                avgPoint = Vector2Add(avgPoint, ith_point);
+            }
+            avgPoint = Vector2Scale(avgPoint, -1.0f / (float) N);
+
+            camera.zoom = 5.5f;
+            avgPoint = Vector2Scale(avgPoint, camera.zoom);
+            camera.offset = Vector2Add(center_of_the_screen, avgPoint);
+        }
+
         // Draw
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
         DrawText("Fourier Series Project", (int) (0.7 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
         DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+        DrawText("Press SPACE to zoom-in/zoom-out", (int) (0.1 * SCREEN_WIDTH), (int) (0.2 * SCREEN_HEIGHT), 20, LIGHTGRAY);
 
         BeginMode2D(camera);
         drawSketch(&mySketch, TRACE_COLOR);
         if (finished_sketching) {
             Vector2 curPoint = myCycloidSketch.vertices[myCycloidSketch.index];
             drawCycloid(&myCycloid);
-            drawSketch(&(myCycloidSketch), TRACE_COLOR);
+            drawSketch(&(myCycloidSketch), GREEN);
         }
         EndMode2D();
         EndDrawing();

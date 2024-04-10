@@ -73,14 +73,14 @@ void drawCycloid(struct Cycloid *cycloid) {
 
 
 void updateCycloid(struct Cycloid *cycloid) {
-    double SPEED = 0.01;
+    double SPEED = 0.001;
 
     // update the thetas using the omegas
     Vector2 previousCenter, nextCenter;
     previousCenter = cycloid->center;
     for (int i = 0; i < cycloid->numCycles; i++) {
         // cycloid.thetas[i] += cycloid.omegas[i];
-        cycloid->thetas[i] += (SPEED * (cycloid->omegas[i]));
+        cycloid->thetas[i] += SPEED * ((float) cycloid->omegas[i]) * (2 * PI / 1);
 
         double theta = cycloid->thetas[i];
         double radius = cycloid->radius[i];
@@ -88,7 +88,7 @@ void updateCycloid(struct Cycloid *cycloid) {
         // calculate next center
         Vector2 ray;
         ray.x = (float) (cos(theta));
-        ray.y = (float) (-1 * sin(theta));
+        ray.y = (float) (sin(theta));
 
         ray = Vector2Scale(ray, (float) radius);
         nextCenter = Vector2Add(previousCenter, ray);

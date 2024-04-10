@@ -15,7 +15,7 @@
 #include "constants.h"
 
 #define MAX_VERTICES 1000
-#define DELTA_VERTICES 1
+#define DELTA_VERTICES 0.01
 
 struct Sketch {
     Vector2 *vertices;

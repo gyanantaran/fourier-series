@@ -11,6 +11,7 @@
 #include "stdio.h"
 
 #include "math.h"
+#include "complex.h"
 
 #include "../include/sketch.h"
 #include "../include/cycloid.h"

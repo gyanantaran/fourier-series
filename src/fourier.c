@@ -19,27 +19,28 @@ const double DELTA_TIME = 0.0001;
 // the number of time points sampled everytime
 const int MAX_TIME_POINTS = (int) (TIME_PERIOD / DELTA_TIME);
 
-double w_0 = PI / TIME_PERIOD;
+double w_0 = 2 * PI / TIME_PERIOD;
 
 
 Vector2 sampleSketch(struct Sketch *sketch, double t) {
     // takes the index of the sketch to be a predictor of the time index
     // assumption, sampling of mouse location in the code will be in line with uniform time
+    if (t < 0) printf("t less than 0 received %f\n", t);
+    if (t > 1) printf("t greater than 0 received %f\n", t);
 
-    double real_index = t * (sketch->index);
+    double real_index = t * (sketch->index + 1);
     // printf("real index %f\n", real_index);
     int floor_index = floor(real_index);
     int ceil_index = ceil(real_index);
 
     // printf("calculated floor and ceil %d %d\n", floor_index, ceil_index);
-
     if (ceil_index == 0) return sketch->vertices[0];
-    else if (floor_index == sketch->index) return sketch->vertices[sketch->index];
     else if (floor_index == ceil_index) return sketch->vertices[floor_index];
     else {   // doing linear interpolation between ceil and floor indexes
         double ceil_difference = (ceil_index - real_index);
         double floor_difference = (real_index - floor_index);
 
+        if (ceil_index == sketch->index + 1) ceil_index = 0;
         Vector2 floor_point = sketch->vertices[floor_index];
         Vector2 ceil_point = sketch->vertices[ceil_index];
 
@@ -55,23 +56,27 @@ Vector2 sampleSketch(struct Sketch *sketch, double t) {
 }
 
 Vector2 calculate_a(struct Sketch *sketch, int k) {
-    Vector2 ak = {0, 0};
-    for (int i = 0; i < MAX_TIME_POINTS; i++) {
-        double t = ((float) i) / (float) MAX_TIME_POINTS;
-        Vector2 x_t = sampleSketch(sketch, t);
+    // numerical integration
+    Vector2 ak;
+    ak = (Vector2) {0, 0};
+    for (int m = 0; m < MAX_TIME_POINTS; m++) {
+        double t = m * DELTA_TIME;
 
         // calculating the complex exponent
-        double kw_0t = (k * w_0) * t;
-        Vector2 complex_exponent = {(float) cos(kw_0t), (float) sin(kw_0t)};
+        Vector2 sample = sampleSketch(sketch, t);
+        complex float x_t = CMPLXF(sample.x, sample.y);
+
+        double exponent = -1 * (k * w_0) * t;
+        Vector2 e_to_the_j_exponent = {(float) cos(exponent), (float) sin(exponent)};
+        complex float complex_exponent = CMPLXF(e_to_the_j_exponent.x, e_to_the_j_exponent.y);
 
         // complex-multiplication
-        double real_part = x_t.x * complex_exponent.x - x_t.y * complex_exponent.y;
-        double imag_part = x_t.x * complex_exponent.y - x_t.y * complex_exponent.x;
-        Vector2 x_t_into_complex_exponent_into_delta = {(float) real_part, (float) imag_part};
-        x_t_into_complex_exponent_into_delta = Vector2Scale(x_t_into_complex_exponent_into_delta, (float) DELTA_TIME);
+        complex float multiplied = x_t * complex_exponent * DELTA_TIME;
+        Vector2 element = (Vector2) {creal(multiplied), cimag(multiplied)};
 
-        ak = Vector2Add(x_t_into_complex_exponent_into_delta, ak);
+        ak = Vector2Add(element, ak);
     }
+    ak = Vector2Scale(ak, (1 / TIME_PERIOD));
     return ak;
 }
 
