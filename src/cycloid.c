@@ -5,8 +5,6 @@
 
 #include "../include/cycloid.h"
 
-float SPEED = 0.001f;
-
 struct Cycloid createCycloid(int numCycles, Vector2 center) {
     printf("allocating cycloid...\n");
 
@@ -19,6 +17,8 @@ struct Cycloid createCycloid(int numCycles, Vector2 center) {
     newCycloid.thetas = (double *) calloc(newCycloid.numCycles, sizeof(double));
     newCycloid.omegas = (int *) calloc(newCycloid.numCycles, sizeof(int));
     newCycloid.outerPoints = (Vector2 *) calloc(newCycloid.numCycles, sizeof(Vector2));
+    newCycloid.SPEED = 0.001f;
+
 
     for (int k = 0; k < newCycloid.numCycles; k++) {
         // if index is odd then number should be +ve
@@ -80,7 +80,7 @@ void updateCycloid(struct Cycloid *cycloid) {
     previousCenter = cycloid->center;
     for (int i = 0; i < cycloid->numCycles; i++) {
         // cycloid.thetas[i] += cycloid.omegas[i];
-        cycloid->thetas[i] += SPEED * ((float) cycloid->omegas[i]) * (2 * PI / 1);
+        cycloid->thetas[i] += cycloid->SPEED * ((float) cycloid->omegas[i]) * (2 * PI / 1);
 
         double theta = cycloid->thetas[i];
         double radius = cycloid->radius[i];

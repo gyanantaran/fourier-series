@@ -25,6 +25,8 @@ struct Cycloid {
     int *omegas;
 
     Vector2 *outerPoints;
+
+    float SPEED;
 };
 
 struct Cycloid createCycloid(int numCycles, Vector2 center);

@@ -11,8 +11,32 @@
 
 #include "../include/fourier.h"
 
+// Compare function for sorting floats
+int compare_floats(const void *a, const void *b) {
+    float fa = *((float*)a);
+    float fb = *((float*)b);
+    if (fa < fb) return -1;
+    if (fa > fb) return 1;
+    return 0;
+}
+
+// Function to find median of an array of floats
+float find_median(float arr[], int n) {
+    // Sort the array
+    qsort(arr, n, sizeof(float), compare_floats);
+
+    // Calculate median
+    if (n % 2 == 0) {
+        // If even number of elements, average of the middle two elements
+        return (arr[n/2 - 1] + arr[n/2]) / 2.0;
+    } else {
+        // If odd number of elements, middle element
+        return arr[n/2];
+    }
+}
+
 int main(void) {
-    int numCycles = 100;
+    int numCycles = 90;
     Vector2 center = (Vector2) {(0), (0)};
     struct Cycloid myCycloid;
     struct Sketch mySketch;
@@ -61,20 +85,29 @@ int main(void) {
                 camera.offset = center_of_the_screen;
                 camera.zoom = 1.0f;
             }
+            myCycloid.SPEED = 0.001f;
         }
         if (update_camera) {
-            int N = 10;
-            // calculate average point from last `N` points
+            const int N = 10;
+            float points_x[N], points_y[N];
+
+            // calculate ~average~ median point from last `N` points
             Vector2 avgPoint = {0, 0};
             for (int d = 0; d < N; d++) {
                 Vector2 ith_point = myCycloidSketch.vertices[myCycloidSketch.index - d];
-                avgPoint = Vector2Add(avgPoint, ith_point);
+
+                points_x[d] = ith_point.x;
+                points_y[d] = ith_point.y;
             }
-            avgPoint = Vector2Scale(avgPoint, -1.0f / (float) N);
+            float x_median = -1 * find_median(points_x, N);
+            float y_median = -1 * find_median(points_y, N);
+            avgPoint = (Vector2) {x_median, y_median};
 
             camera.zoom = 20.0f;
             avgPoint = Vector2Scale(avgPoint, camera.zoom);
             camera.offset = Vector2Add(center_of_the_screen, avgPoint);
+
+            myCycloid.SPEED = 0.0001f;
         }
 
         // Draw

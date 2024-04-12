@@ -2,18 +2,28 @@
 
 A graphical visualiser and a browser for Fourier series expansion of arbitrary 2D Signals or Drawings!
 
+Hello fellow learner and earthling! I hope you enjoy studying my work here.
+
 # TODO
 
 * Menu system (with blinking rectangle):
+
 A : Adds a new harmonic
+
 E : Removes the harmonic with highest frequency
+
 R : Reset the input signal
+
 Q : [Toggle] Render all harmonics
+
 S : [Toggle] Render input signal
+
 D : [Toggle] Render cycoids
+
 Space : [Toogle] Slow motion close up
 
 * SVG Input
+* Sound frequency based on current radii and frequencies
 
 ## Instruction to build the project
 
@@ -27,8 +37,8 @@ Note: this project uses `cmake`, make sure that is installed, the minimum versio
 cd fourier-series
 mkdir build
 cd build
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Release #(or Debug)
-./build/fourier_series
+cmake .. && make
+./fourier_series
 ```
 
 Something like the above should work, I've not tried it (yet) as I use Clion's UI.
@@ -57,3 +67,14 @@ Something like the above should work, I've not tried it (yet) as I use Clion's U
 
 ![sketch-added](https://github.com/gyanantaran/fourier-series/assets/95016059/6ae25c6d-8180-472c-b2e0-98f05608e7e3)
 
+# Resources
+
+If you want to further understand and further study fourier-series and fourier transform, here are the resources I used:
+
+1. [But what is a Fourier series? - 3b1b](https://www.youtube.com/embed/r6sGWTCMz2k?si=qhbYiE5w86cLLsef)
+2. [2D Signal approximation ... - Pezzza's Work](https://www.youtube.com/embed/dRgFjYEURg8?si=I5HEyx18BxcU4hxI)
+
+Additional resources for autodidacts and builders
+
+1. [But what is the Fourier Transform? - 3b1b](https://www.youtube.com/embed/spUNpyF58BY?si=b3UbnPR6uXIgkl5D)
+2. [The more general uncertainty principle ... - 3b1b](https://www.youtube.com/embed/MBnnXbOM5S4?si=2NRGkbRGAD169CYX)
