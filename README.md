@@ -43,6 +43,11 @@ cmake .. && make
 
 Something like the above should work, I've not tried it (yet) as I use Clion's UI.
 
+## Some Demos!
+
+https://github.com/gyanantaran/fourier-series/assets/95016059/68d1814a-8531-4eca-a2db-c6e7b3e47850
+
+https://github.com/gyanantaran/fourier-series/assets/95016059/6f9a225e-e1a2-41cf-9b52-4291721348ef
 
 ## sampling bug - sample are very unevenly distributed in commit 607989e
 
