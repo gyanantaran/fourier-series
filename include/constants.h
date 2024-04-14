@@ -9,6 +9,14 @@
 
 #define MAX_FPS 60
 
+#define ZOOM_AFTER_ZOOM 10.0f
+#define NORMAL_ZOOM 1.0f
+
+#define SPEED_AFTER_ZOOM (0.005f * 1/ZOOM_AFTER_ZOOM)
+#define NORMAL_SPEED 0.001f
+
+#define NUMBER_CYCLES 300
+
 #define SCREEN_HEIGHT 1000
 #define SCREEN_WIDTH  1500
 
