@@ -5,8 +5,17 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 11)
 
 
-# Our Project
-add_executable(${PROJECT_NAME} src/cycloid.c src/sketch.c src/fourier.c test/drawFourier.c)
+# The Project
+add_executable(
+        ${PROJECT_NAME}
+        src/cycloid.c
+        src/sketch.c
+        src/fourier.c
+        src/drawing.c
+        src/readPoints.c
+        test/drawSVG.c
+        #main.c
+)
 
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
