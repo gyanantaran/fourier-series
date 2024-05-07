@@ -30,15 +30,19 @@ void handleSketching(struct GameState *state, Camera2D *camera, struct Cycloid *
 
 void handleZooming(struct GameState *state);
 
-void updateCamera(struct GameState *state, Camera2D *camera, struct Sketch *myCycloidSketch, struct Cycloid *myCycloid, Vector2 offset);
+void updateCamera(struct GameState *state, Camera2D *camera, struct Sketch *myCycloidSketch, struct Cycloid *myCycloid,
+                  Vector2 offset);
+
+void drawText();
 
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");
-    SetTargetFPS(60);
+    SetTargetFPS(MAX_FPS);
 
     struct Cycloid myCycloid = createCycloid(NUMBER_CYCLES, (Vector2) {(0), (0)});
     struct Sketch mySketch = createSketch();
     struct Sketch myCycloidSketch = createSketch();
+//    struct Sketch myCycloidSketch2 = createSketch();
 
     mySketch.connectFirstLast = true;
 
@@ -56,25 +60,25 @@ int main(void) {
         // Update
         handleSketching(&gameState, &camera, &myCycloid, &mySketch,
                         &myCycloidSketch); // state handling  --  Sketching Input from mouse
+
         updateCycloid(&myCycloid);
         updateSketch(&(myCycloidSketch), myCycloid.outerPoints[myCycloid.numCycles - 1]);
+
+//        updateSketch(&(myCycloidSketch2), myCycloid.outerPoints[myCycloid.numCycles - 1 - 10]);
+
         handleZooming(&gameState);
         updateCamera(&gameState, &camera, &myCycloidSketch, &myCycloid, offset);
 
         // Draw
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
-
-        DrawText("Fourier Series Project", (int) (0.7 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
-        DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
-        DrawText("Press SPACE to zoom-in/zoom-out", (int) (0.1 * SCREEN_WIDTH), (int) (0.2 * SCREEN_HEIGHT), 20,
-                 LIGHTGRAY);
-
+        drawText();
         BeginMode2D(camera);
         drawSketch(&mySketch, BLUE);
         if (gameState.sketchingFinished) {
             drawCycloid(&myCycloid);
             drawSketch(&(myCycloidSketch), GREEN);
+//            drawSketch(&(myCycloidSketch2), YELLOW);
         }
         EndMode2D();
         EndDrawing();
@@ -84,6 +88,16 @@ int main(void) {
     freeSketch(&(myCycloidSketch));
     freeSketch(&mySketch);
     return 0;
+}
+
+void drawText() {
+    DrawText("Fourier Series Project", (int) (0.7 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+    DrawText("Press E to Erase", (int) (0.1 * SCREEN_WIDTH), (int) (0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+    DrawText("Press SPACE to zoom-in/zoom-out", (int) (0.1 * SCREEN_WIDTH), (int) (0.2 * SCREEN_HEIGHT), 20,
+             LIGHTGRAY);
+    DrawText("Signals and Systems", (int) (0.6 * SCREEN_WIDTH), (int) (0.8 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+    DrawText("Vishal Paudel", (int) (0.6 * SCREEN_WIDTH), (int) (0.85 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+    DrawText("under the guidance of Professor Vivek Deulkar", (int) (0.5 * SCREEN_WIDTH), (int) (0.9 * SCREEN_HEIGHT), 20, LIGHTGRAY);
 }
 
 void handleSketching(struct GameState *state, Camera2D *camera, struct Cycloid *myCycloid, struct Sketch *mySketch,
@@ -110,7 +124,8 @@ void handleZooming(struct GameState *state) {
     }
 }
 
-void updateCamera(struct GameState *state, Camera2D *camera, struct Sketch *myCycloidSketch, struct Cycloid *myCycloid, Vector2 offset) {
+void updateCamera(struct GameState *state, Camera2D *camera, struct Sketch *myCycloidSketch, struct Cycloid *myCycloid,
+                  Vector2 offset) {
     float K = 7.0f;  // transition speed
     if (state->cameraZoomed) {
         const int N = 3;
@@ -121,17 +136,18 @@ void updateCamera(struct GameState *state, Camera2D *camera, struct Sketch *myCy
         Vector2 centerPoint = find_median_point(last_few_points, N);
 
         // transition, messy, but mathematical
-        camera->zoom = camera->zoom + (ZOOM_AFTER_ZOOM - camera->zoom)/(10 * K);
-        camera->offset = Vector2Add(Vector2Scale(Vector2Subtract(Vector2Add(offset, Vector2Scale(centerPoint, camera->zoom)), camera->offset), 1/K), camera->offset);
-        myCycloid->SPEED = myCycloid->SPEED + (SPEED_AFTER_ZOOM - myCycloid->SPEED)/K;
-    }
-    else if (!(state->cameraZoomed)) {
+        camera->zoom = camera->zoom + (ZOOM_AFTER_ZOOM - camera->zoom) / (10 * K);
+        camera->offset = Vector2Add(Vector2Scale(
+                                            Vector2Subtract(Vector2Add(offset, Vector2Scale(centerPoint, camera->zoom)), camera->offset), 1 / K),
+                                    camera->offset);
+        myCycloid->SPEED = myCycloid->SPEED + (SPEED_AFTER_ZOOM - myCycloid->SPEED) / K;
+    } else if (!(state->cameraZoomed)) {
         // transition, messy, but mathematical
-        camera->offset = Vector2Add(Vector2Scale(Vector2Subtract(offset, camera->offset), 1/(10 * K)), camera->offset);
-        camera->zoom = camera->zoom + (NORMAL_ZOOM - camera->zoom)/(5 * K);
-        myCycloid->SPEED = myCycloid->SPEED + (NORMAL_SPEED - myCycloid->SPEED)/K;
-    }
-    else {
+        camera->offset = Vector2Add(Vector2Scale(Vector2Subtract(offset, camera->offset), 1 / (10 * K)),
+                                    camera->offset);
+        camera->zoom = camera->zoom + (NORMAL_ZOOM - camera->zoom) / (5 * K);
+        myCycloid->SPEED = myCycloid->SPEED + (NORMAL_SPEED - myCycloid->SPEED) / K;
+    } else {
         assert(0 && "updateCamera: Unexpected branch reached!");
     }
 }
