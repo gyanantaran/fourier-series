@@ -13,12 +13,11 @@ struct Cycloid createCycloid(int numCycles, Vector2 center) {
     newCycloid.numCycles = numCycles;
     newCycloid.center = center;
 
-    newCycloid.radius = (double *) calloc(newCycloid.numCycles, sizeof(double));
-    newCycloid.thetas = (double *) calloc(newCycloid.numCycles, sizeof(double));
-    newCycloid.omegas = (int *) calloc(newCycloid.numCycles, sizeof(int));
-    newCycloid.outerPoints = (Vector2 *) calloc(newCycloid.numCycles, sizeof(Vector2));
+    newCycloid.radius = (double *) calloc(MAX_CYCLOIDS, sizeof(double));
+    newCycloid.thetas = (double *) calloc(MAX_CYCLOIDS, sizeof(double));
+    newCycloid.omegas = (int *) calloc(MAX_CYCLOIDS, sizeof(int));
+    newCycloid.outerPoints = (Vector2 *) calloc(MAX_CYCLOIDS, sizeof(Vector2));
     newCycloid.SPEED = 0.001f;
-
 
     for (int k = 0; k < newCycloid.numCycles; k++) {
         // if index is odd then number should be +ve
@@ -26,9 +25,15 @@ struct Cycloid createCycloid(int numCycles, Vector2 center) {
         int sign = (2 * (k % 2) - 1);
         int value = (k + 1) / 2;
         newCycloid.omegas[k] = sign * value;
+
+        // for a square wave initialisation
+        int omega = newCycloid.omegas[k];
+        if (omega > 0 && (omega % 2 == 1)) {
+            newCycloid.radius[k] = 1000.0 / ((float) (k + 1) * PI);
+        }
     }
 
-    printf("allocated cycloid...\n");
+    printf("...allocated cycloid\n");
 
     return newCycloid;
 }
@@ -48,7 +53,7 @@ bool freeCycloid(struct Cycloid *cycloid) {
     free(cycloid->outerPoints);
     cycloid->outerPoints = NULL;
 
-    printf("deallocated cycloid...\n");
+    printf("...deallocated cycloid\n");
 
     return true;
 }

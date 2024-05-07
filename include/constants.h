@@ -1,31 +1,28 @@
-//
-// Created by Vishal Paudel on 05/04/24.
-//
-
-#include "raylib.h"
+// constants.h
+// author: vishalpaudel
 
 #ifndef FOURIER_SERIES_CONSTANTS_H
 #define FOURIER_SERIES_CONSTANTS_H
 
+#include "raylib.h" // for colors
+#define CIRCUMFERENCE_COLOR LIGHTGRAY
+#define BACKGROUND_COLOR RAYWHITE
+#define PEN_COLOR BLACK
+#define TEXT_COLOR LIGHTGRAY
+#define TRACE_COLOR BLACK
+
 #define MAX_FPS 60
-
-#define ZOOM_AFTER_ZOOM 10.0f
-#define NORMAL_ZOOM 1.0f
-
-#define SPEED_AFTER_ZOOM (0.005f * 1/ZOOM_AFTER_ZOOM)
-#define NORMAL_SPEED 0.001f
-
 #define NUMBER_CYCLES 300
 
 #define SCREEN_HEIGHT 1000
 #define SCREEN_WIDTH  1500
 
-// Colors
-#define CIRCUMFERENCE_COLOR LIGHTGRAY
+#define ZOOM_AFTER_ZOOM 10.0f
+#define NORMAL_ZOOM 1.0f
+#define SPEED_AFTER_ZOOM (0.001f * 1/ZOOM_AFTER_ZOOM)
+#define NORMAL_SPEED 0.001f
 
-#define BACKGROUND_COLOR BLACK
-#define PEN_COLOR RAYWHITE
-#define TEXT_COLOR LIGHTGRAY
-#define TRACE_COLOR YELLOW
+#define MAX_VERTICES 3000
+#define DELTA_VERTICES 0.0
 
 #endif //FOURIER_SERIES_CONSTANTS_H

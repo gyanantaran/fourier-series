@@ -5,6 +5,12 @@
 
 #include "../include/sketch.h"
 
+#include "stdlib.h"
+#include "stdio.h"
+#include "stdbool.h"
+
+#include "raymath.h"
+
 struct Sketch createSketch() {
     printf("allocating sketch...\n");
     struct Sketch sketch;
@@ -12,7 +18,7 @@ struct Sketch createSketch() {
     sketch.index = -1;
     sketch.connectFirstLast = false;
 
-    printf("allocated sketch...\n");
+    printf("...allocated sketch\n");
 
     return sketch;
 }
@@ -21,7 +27,7 @@ bool freeSketch(struct Sketch *sketch) {
     printf("deallocating sketch...\n");
     free(sketch->vertices);
     sketch->vertices = NULL;
-    printf("deallocated sketch...\n");
+    printf("...deallocated sketch\n");
 
     return true;
 }

@@ -31,7 +31,6 @@ Vector2 sampleSketch(struct Sketch *sketch, double t) {
     if (t > 1) printf("t greater than 0 received %f\n", t);
 
     double real_index = t * (sketch->index + 1);
-    // printf("real index %f\n", real_index);
     int floor_index = floor(real_index);
     int ceil_index = ceil(real_index);
 
