@@ -1,112 +1,137 @@
-/*******************************************************************************************
-*
-*   raylib [core] example - 2d camera mouse zoom
-*
-*   Example originally created with raylib 4.2, last time updated with raylib 4.2
-*
-*   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
-*   BSD-like license that allows static linking with closed source software
-*
-*   Copyright (c) 2022-2024 Jeffery Myers (@JeffM2501)
-*
-********************************************************************************************/
+// main.c
+// author: vishalpaudel
 
 #include "raylib.h"
+#include "include/sketch.h"
+#include "include/cycloid.h"
+#include "include/fourier.h"
+#include "include/readPoints.h"
 
-#include "rlgl.h"
-#include "raymath.h"
+struct GameState {
+    bool sketchingFinished;
+    bool cameraZoomed;
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
-int main ()
-{
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    bool showAllHarmonics;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera mouse zoom");
+    bool addHarmonicSignal;
+    bool removeHarmonicSignal;
 
-    Camera2D camera = { 0 };
-    camera.target = (Vector2) {-screenWidth/2, -screenHeight / 2};
-    camera.zoom = 1.0f;
+    bool updateFourierSignal;
+    bool eraseEverythingSignal;
+};
 
-    Vector2 points[2] = {{0, 0}, {100, 100}};
+struct GameObjects {
+    struct Sketch signal;
+    struct Cycloid cycloid;
 
-    SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+    Camera2D camera;
+};
 
-    // Main game loop
-    while (!WindowShouldClose())        // Detect window close button or ESC key
-    {
-        // Update
-        //----------------------------------------------------------------------------------
-        // Translate based on mouse right click
-        if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
-        {
-            Vector2 delta = GetMouseDelta();
-            delta = Vector2Scale(delta, -1.0f/camera.zoom);
+void initApp();
 
-            camera.target = Vector2Add(camera.target, delta);
-        }
+void deInitApp(struct GameObjects *objects);
 
-        // Zoom based on mouse wheel
-        float wheel = GetMouseWheelMove();
-        if (wheel != 0)
-        {
-            // Get the world point that is under the mouse
-            Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+void handle_events(struct GameState *state);
 
-            // Set the offset to where the mouse is
-            camera.offset = GetMousePosition();
+void update(const struct GameState *state, struct GameObjects *objects);
 
-            // Set the target to match, so that the camera maps the world space point
-            // under the cursor to the screen space point under the cursor at any zoom
-            camera.target = mouseWorldPos;
+void draw(const struct GameState *state, struct GameObjects *objects);
 
-            // Zoom increment
-            const float zoomIncrement = 0.125f;
+//    Camera2D camera =
 
-            camera.zoom += (wheel*zoomIncrement);
-            if (camera.zoom < zoomIncrement) camera.zoom = zoomIncrement;
-        }
+int main(void) {
+    initApp();
 
-        //----------------------------------------------------------------------------------
+    Vector2 window_offset = (Vector2) {(float) GetScreenWidth() / 2.0f, (float) GetScreenHeight() / 2.0f};
+    struct GameState state = {.sketchingFinished=true, .cameraZoomed=false, .showAllHarmonics=false, .eraseEverythingSignal=false};
+    struct GameObjects objects = {
+            .signal=readPointsFile(POINTS_FILE_PATH),
+            .cycloid=createCycloid(5, (Vector2) {0, 0}),
+            .camera={
+                    .target = {0, 0}, .offset = window_offset, .rotation = 0, .zoom = 1.0f
+            }
+    };
+    objects.signal.connectFirstLast = true;
+    updateFourier(&objects.cycloid, &objects.signal);
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        BeginMode2D(camera);
-
-        // Draw the 3d grid, rotated 90 degrees and centered around 0,0
-        // just so we have something in the XY plane
-        rlPushMatrix();
-        rlTranslatef(0, 25*50, 0);
-        rlRotatef(90, 1, 0, 0);
-        DrawGrid(100, 50);
-        rlPopMatrix();
-
-        // Draw a reference circle
-        DrawCircle(0, 450, 50, YELLOW);
-
-        DrawCircleV(GetScreenToWorld2D(GetMousePosition(), camera), 50, WHITE);
-
-        DrawLineStrip(points, 2, WHITE);
-
-        EndMode2D();
-
-        DrawText("Mouse right button drag to move, mouse wheel to zoom", 10, 10, 20, WHITE);
-
-        EndDrawing();
-        //----------------------------------------------------------------------------------
+    while (!WindowShouldClose()) {
+        handle_events(&state);
+        update(&state, &objects);
+        draw(&state, &objects);
     }
-
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    deInitApp(&objects);
     return 0;
+}
+
+void update(const struct GameState *state, struct GameObjects *objects) {
+    if (!state->sketchingFinished) {
+        Vector2 mouse_pos = GetMousePosition();
+        mouse_pos = GetScreenToWorld2D(mouse_pos, objects->camera);
+        updateSketch(&objects->signal, mouse_pos);
+    } else if (state->updateFourierSignal) {
+        printf("Hello\n");
+        updateFourier(&objects->cycloid, &objects->signal);
+    }
+    else { updateCycloid(&objects->cycloid); }
+
+    if (state->addHarmonicSignal) { objects->cycloid.numCycles += 1; }
+    if (state->removeHarmonicSignal) { objects->cycloid.numCycles -= 1; }
+}
+
+void draw(const struct GameState *state, struct GameObjects *objects) {
+    BeginDrawing();
+    ClearBackground(BACKGROUND_COLOR);
+    DrawText(TextFormat("Number of Cycloids: %d\n\n\n\nPress E to Erase\n\nPress SPACE to zoom-in/zoom-out",
+                        objects->cycloid.numCycles), (int) (0.075 * GetScreenWidth()),
+             (int) (0.075 * GetScreenHeight()), 20, PEN_COLOR);
+    DrawText(TextFormat(
+                     "Fourier Series Project\n\nSignals and Systems\n\nVishal Paudel\n\nunder the guidance of \n\nProfessor Vivek Deulkar"),
+             (int) (0.75 * GetScreenWidth()), (int) (0.8 * GetScreenHeight()), 20, TEXT_COLOR);
+
+    BeginMode2D(objects->camera);
+    drawSketch(&objects->signal, PEN_COLOR);
+    if (state->sketchingFinished) drawCycloid(&objects->cycloid);
+    EndMode2D();
+    EndDrawing();
+}
+
+void initApp() {
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series");
+    SetTargetFPS(MAX_FPS);
+}
+
+void deInitApp(struct GameObjects *objects) {
+    freeSketch(&objects->signal);
+    freeCycloid(&objects->cycloid);
+    CloseWindow();
+}
+
+void handle_events(struct GameState *state) {
+    // jugaad to get an impulse of add/remove harmonic signal
+    state->addHarmonicSignal = false;
+    state->removeHarmonicSignal = false;
+
+    state->updateFourierSignal = false;
+    state->eraseEverythingSignal = false;
+
+    if (false) {
+
+    } else if (IsKeyPressed(KEY_E)) { printf("Pressed E\n");
+        state->eraseEverythingSignal = true;
+    } else if (IsKeyReleased(KEY_E)) { printf("Released E\n");
+    } else if (IsKeyPressed(KEY_SPACE)) { printf("Pressed SPACE\n");
+        state->cameraZoomed = !(state->cameraZoomed);
+    } else if (IsKeyPressed(KEY_A)) { printf("Pressed A\n");
+        state->addHarmonicSignal = true;
+        state->updateFourierSignal = true;
+    } else if (IsKeyPressed(KEY_D)) { printf("Pressed D\n");
+        state->removeHarmonicSignal = true;
+    } else if (IsKeyPressed(KEY_S)) { printf("Pressed S\n");
+    } else if (IsKeyPressed(KEY_W)) { printf("Pressed W\n");
+    } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) { printf("Mouse Left Pressed\n");
+        state->sketchingFinished = false;
+    } else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) { printf("Mouse Left Released\n");
+        state->sketchingFinished = true;
+        state->updateFourierSignal = true;
+    }
 }
