@@ -15,8 +15,6 @@
 #include "stdlib.h"
 #include "stdbool.h"
 
-#define MAX_CYCLOIDS 3000
-
 // need to add ability to add cycloids
 struct Cycloid {
     int numCycles;
@@ -29,7 +27,7 @@ struct Cycloid {
 
     Vector2 *outerPoints;  // do I really need this here?
 
-    float SPEED;   // do I really need this here?
+    float TIME_PERIOD;  // breaking change: removed speed variable
 };
 
 struct Cycloid createCycloid(int numCycles, Vector2 center);

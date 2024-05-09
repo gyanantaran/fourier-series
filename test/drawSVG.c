@@ -5,8 +5,8 @@
 #include "../include/readPoints.h"
 
 int main() {
-    const char file_path[] = "/Users/gyanantaran/Repos/fourier-series/assets/points-svg/music.txt";
-    struct Drawing drawing = readPointsFile(file_path);
+    const char file_path[] = "/Users/gyanantaran/Repos/fourier-series/assets/points-svg/peanocurve.txt";
+    struct Sketch point_sketch = readPointsFile(file_path);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");
     SetTargetFPS(60);
@@ -14,10 +14,10 @@ int main() {
         BeginDrawing();
         ClearBackground(BACKGROUND_COLOR);
         // drawing all sub-`sketch`es inside the `drawing`
-        for (int i = 0; i < drawing.numSketches; i++) { drawSketch(&drawing.sketches[i], TRACE_COLOR); }
+        drawSketch(&point_sketch, PEN_COLOR);
         EndDrawing();
     }
     CloseWindow();
-    freeDrawing(&drawing);
+    freeSketch(&point_sketch);
     return 0;
 }

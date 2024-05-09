@@ -34,6 +34,7 @@ bool freeSketch(struct Sketch *sketch) {
 
 void drawSketch(struct Sketch *sketch, Color color) {
     if (sketch->index > 0) {
+
         DrawLineStrip(sketch->vertices, sketch->index + 1, color);
 
         // connect first and last point

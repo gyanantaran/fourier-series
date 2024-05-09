@@ -17,22 +17,16 @@ struct Cycloid createCycloid(int numCycles, Vector2 center) {
     newCycloid.thetas = (double *) calloc(MAX_CYCLOIDS, sizeof(double));
     newCycloid.omegas = (int *) calloc(MAX_CYCLOIDS, sizeof(int));
     newCycloid.outerPoints = (Vector2 *) calloc(MAX_CYCLOIDS, sizeof(Vector2));
-    newCycloid.SPEED = 0.001f;
 
-    for (int k = 0; k < newCycloid.numCycles; k++) {
+    newCycloid.TIME_PERIOD = NORMAL_TIME_PERIOD;
+
+    for (int k = 0; k < MAX_CYCLOIDS; k++) {
         // if index is odd then number should be +ve
         // so for example [0, 1, -1, 2, -2 ...]
         int sign = (2 * (k % 2) - 1);
         int value = (k + 1) / 2;
         newCycloid.omegas[k] = sign * value;
-
-        // for a square wave initialisation
-        int omega = newCycloid.omegas[k];
-        if (omega > 0 && (omega % 2 == 1)) {
-            newCycloid.radius[k] = 1000.0 / ((float) (k + 1) * PI);
-        }
     }
-
     printf("...allocated cycloid\n");
 
     return newCycloid;
@@ -85,7 +79,8 @@ void updateCycloid(struct Cycloid *cycloid) {
     previousCenter = cycloid->center;
     for (int i = 0; i < cycloid->numCycles; i++) {
         // cycloid.thetas[i] += cycloid.omegas[i];
-        cycloid->thetas[i] += cycloid->SPEED * ((float) cycloid->omegas[i]) * (2 * PI / 1);
+        float delta_time = GetFrameTime();
+        cycloid->thetas[i] += delta_time * ((float) cycloid->omegas[i]) * (2 * PI / cycloid->TIME_PERIOD);
 
         double theta = cycloid->thetas[i];
         double radius = cycloid->radius[i];

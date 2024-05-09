@@ -5,24 +5,42 @@
 
 #include "../include/fourier.h"
 
-// synthesis equation  ==  Drawing out the phasors
-// $\frac{1}{T} \sum \limits_{k=-\infnty}^{\infnty} a_k * e^{j k w_0 t}$
-
-// analysis equation  ==  finding the radius and initial value
-// $a_k = \int \limits_{t=-\infnty}^{\infnty} $
-
-
-// time in seconds to complete one rotation
-const double TIME_PERIOD = 1;
-
-// granularity of data points in time
+//const double TIME_PERIOD = 1;
 const double DELTA_TIME = 0.0001;
+const int MAX_TIME_POINTS = (int) (1 / DELTA_TIME);
+double w_0 = 2 * PI; // / TIME_PERIOD;
 
-// the number of time points sampled everytime
-const int MAX_TIME_POINTS = (int) (TIME_PERIOD / DELTA_TIME);
+bool updateFourier(struct Cycloid *cycloid, struct Sketch *sketch) {
+    for (int i = 0; i < cycloid->numCycles; i++) {
+        int k = cycloid->omegas[i];
+        Vector2 a_k = calculate_a(sketch, k);
+        double radius = sqrt((double) (a_k.x * a_k.x + a_k.y * a_k.y));
+        double theta = atan((double) (a_k.y / a_k.x));
+        if (a_k.x < 0) theta = PI + theta; // atan() range of [-pi/2, pi/2], but for Quadrant 2 or Quadrant 3
+        cycloid->radius[i] = radius;
+        cycloid->thetas[i] = theta;
+    }
+    return true;
+}
 
-double w_0 = 2 * PI / TIME_PERIOD;
-
+// numerical integration
+Vector2 calculate_a(struct Sketch *sketch, int k) {
+    Vector2 ak = {0, 0};
+    double t = 0;
+    for (int m = 0; m < MAX_TIME_POINTS; m++) {
+        Vector2 sample = sampleSketch(sketch, t);
+        complex float x_t = CMPLXF(sample.x, sample.y);
+        double exponent = -1 * (k * w_0) * t;
+        Vector2 e_to_the_j_exponent = {(float) cos(exponent), (float) sin(exponent)};
+        complex float complex_exponent = CMPLXF(e_to_the_j_exponent.x, e_to_the_j_exponent.y);
+        complex float multiplied = x_t * complex_exponent * DELTA_TIME;
+        Vector2 element = (Vector2) {(float) creal(multiplied), (float) cimag(multiplied)};
+        ak = Vector2Add(element, ak);
+        t += DELTA_TIME;
+    }
+    // ak = Vector2Scale(ak, (float) (1 / TIME_PERIOD));
+    return ak;
+}
 
 Vector2 sampleSketch(struct Sketch *sketch, double t) {
     // takes the index of the sketch to be a predictor of the time index
@@ -50,60 +68,7 @@ Vector2 sampleSketch(struct Sketch *sketch, double t) {
 
         Vector2 linear_interpolated_point;
         linear_interpolated_point = Vector2Add(scaled_floor_point, scaled_ceil_point);
-        // printf("Linear interpolated point: (%f, %f)\n", linear_interpolated_point.x, linear_interpolated_point.y);
 
         return linear_interpolated_point;
     }
-}
-
-Vector2 calculate_a(struct Sketch *sketch, int k) {
-    // numerical integration
-    Vector2 ak;
-    ak = (Vector2) {0, 0};
-    for (int m = 0; m < MAX_TIME_POINTS; m++) {
-        double t = m * DELTA_TIME;
-
-        // calculating the complex exponent
-        Vector2 sample = sampleSketch(sketch, t);
-        complex float x_t = CMPLXF(sample.x, sample.y);
-
-        double exponent = -1 * (k * w_0) * t;
-        Vector2 e_to_the_j_exponent = {(float) cos(exponent), (float) sin(exponent)};
-        complex float complex_exponent = CMPLXF(e_to_the_j_exponent.x, e_to_the_j_exponent.y);
-
-        // complex-multiplication
-        complex float multiplied = x_t * complex_exponent * DELTA_TIME;
-        Vector2 element = (Vector2) {creal(multiplied), cimag(multiplied)};
-
-        ak = Vector2Add(element, ak);
-    }
-    ak = Vector2Scale(ak, (1 / TIME_PERIOD));
-    return ak;
-}
-
-bool updateFourier(struct Cycloid *cycloid, struct Sketch *sketch) {
-    for (int i = 0; i < cycloid->numCycles; i++) {
-        int k = cycloid->omegas[i];
-        Vector2 a_k = calculate_a(sketch, k);
-
-        double radius, theta;
-        radius = sqrt((double) (a_k.x * a_k.x + a_k.y * a_k.y));
-        theta = atan((double) (a_k.y / a_k.x));
-        // atan() function returns the values in the range of [-pi/2, pi/2]
-
-        // arc tangent loses information
-        // need to check quadrant
-        // I OVERLOOKED THIS EARLIER and this was a MASSIVE bug
-        if (a_k.x >= 0) {
-            // Quadrant 1 or Quadrant 4
-            theta = theta;
-        } else if (a_k.x < 0) {
-            // Quadrant 1 or Quadrant 4
-            theta = PI + theta;
-        }
-
-        cycloid->radius[i] = radius;
-        cycloid->thetas[i] = theta;
-    }
-    return true;
 }

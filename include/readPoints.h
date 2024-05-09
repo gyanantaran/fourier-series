@@ -8,9 +8,8 @@
 
 #include "stdio.h"
 #include "stdlib.h"
-#include "drawing.h"
 #include "sketch.h"
 
-struct Drawing readPointsFile(const char *filename);
+struct Sketch readPointsFile(const char *filename);
 
 #endif //FOURIER_SERIES_READPOINTS_H
