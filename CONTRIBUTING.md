@@ -14,7 +14,6 @@ There are many ways you can get help when you're stuck. It is recommended to ask
 
 Did a error message tell you to come here? If you want to create an ICE report, refer to existing issues and then [open an issue][issue template].
 
-[ui-changes-guide]: 
 [gyanantaran-discord]: https://discord.com/channels/1218115234733232229
 [gyanantaran-help]: https://discord.com/channels/1218115234733232229/1241278555938230272
 [issue template]: https://github.com/gyanantaran/fourier-series/issues/new/choose
