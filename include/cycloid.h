@@ -7,13 +7,6 @@
 #define FOURIER_SERIES_CYCLOID_H
 
 #include "raylib.h"
-#include "raymath.h"
-
-#include "constants.h"
-
-#include "stdio.h"
-#include "stdlib.h"
-#include "stdbool.h"
 
 // need to add ability to add cycloids
 struct Cycloid {

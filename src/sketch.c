@@ -11,6 +11,9 @@
 
 #include "raymath.h"
 
+#include "../include/constants.h"
+
+
 struct Sketch createSketch() {
     printf("allocating sketch...\n");
     struct Sketch sketch;

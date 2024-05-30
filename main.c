@@ -5,7 +5,8 @@
 #include "include/sketch.h"
 #include "include/cycloid.h"
 #include "include/fourier.h"
-#include "include/readPoints.h"
+#include "include/constants.h"
+// #include "include/readPoints.h"
 
 struct GameState {
     bool sketchingFinished;

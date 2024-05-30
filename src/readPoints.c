@@ -2,8 +2,14 @@
 
 #include "../include/readPoints.h"
 
+#include "../include/constants.h"
+
 #include "math.h"
 #include "raymath.h"
+
+#include "stdio.h"
+#include "stdlib.h"
+
 
 struct Sketch readPointsFile(const char *filename) {
     FILE *file = fopen(filename, "r"); // Open the file for reading

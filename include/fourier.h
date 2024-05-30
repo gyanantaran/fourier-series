@@ -7,11 +7,6 @@
 #define FOURIER_SERIES_FOURIER_H
 
 #include "raylib.h"
-#include "raymath.h"
-#include "stdio.h"
-
-#include "math.h"
-#include "complex.h"
 
 #include "../include/sketch.h"
 #include "../include/cycloid.h"

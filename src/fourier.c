@@ -5,6 +5,12 @@
 
 #include "../include/fourier.h"
 
+#include "raymath.h"
+#include "stdio.h"
+
+#include "math.h"
+#include "complex.h"
+
 //const double TIME_PERIOD = 1;
 const double DELTA_TIME = 0.0001;
 const int MAX_TIME_POINTS = (int) (1 / DELTA_TIME);

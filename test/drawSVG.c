@@ -5,7 +5,7 @@
 #include "../include/readPoints.h"
 
 int main() {
-    const char file_path[] = "/Users/gyanantaran/Repos/fourier-series/assets/points-svg/peanocurve.txt";
+    const char file_path[] = "../assets/points-svg/peanocurve.txt";
     struct Sketch point_sketch = readPointsFile(file_path);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "fourier-series-project");

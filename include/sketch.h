@@ -6,7 +6,7 @@
 #ifndef FOURIER_SERIES_SKETCH_H
 #define FOURIER_SERIES_SKETCH_H
 
-#include "constants.h"
+#include "raylib.h"
 
 struct Sketch {
     Vector2 *vertices;
