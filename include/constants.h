@@ -11,7 +11,7 @@
 #define TEXT_COLOR LIGHTGRAY
 #define TRACE_COLOR BLACK
 
-#define POINTS_FILE_PATH "/Users/gyanantaran/Repos/projects/fourier-series/assets/points-svg/peanocurve.txt"
+#define POINTS_FILE_PATH "assets/points-svg/peanocurve.txt"
 
 #define MAX_FPS 60
 #define NUMBER_CYCLES 1000

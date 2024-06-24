@@ -35,11 +35,11 @@ Vector2 calculate_a(struct Sketch *sketch, int k) {
     double t = 0;
     for (int m = 0; m < MAX_TIME_POINTS; m++) {
         Vector2 sample = sampleSketch(sketch, t);
-        complex float x_t = CMPLXF(sample.x, sample.y);
+        float complex x_t = sample.x + sample.y * I;
         double exponent = -1 * (k * w_0) * t;
         Vector2 e_to_the_j_exponent = {(float) cos(exponent), (float) sin(exponent)};
-        complex float complex_exponent = CMPLXF(e_to_the_j_exponent.x, e_to_the_j_exponent.y);
-        complex float multiplied = x_t * complex_exponent * DELTA_TIME;
+        float complex complex_exponent = e_to_the_j_exponent.x + e_to_the_j_exponent.y * I;
+        float complex multiplied = x_t * complex_exponent * DELTA_TIME;
         Vector2 element = (Vector2) {(float) creal(multiplied), (float) cimag(multiplied)};
         ak = Vector2Add(element, ak);
         t += DELTA_TIME;

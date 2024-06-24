@@ -35,10 +35,11 @@ Note: this project uses `cmake`, make sure that is installed, the minimum versio
 
 ```bash
 cd fourier-series
-mkdir build
-cd build
-cmake .. && make
-./fourier_series
+cmake -DCMAKE_BUILD_TYPE=Release -S . -B ./build/
+cd ./build/
+make
+cd ..
+./build/fourier_series
 ```
 
 
