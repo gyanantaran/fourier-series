@@ -84,7 +84,7 @@ If you want to further study and understand fourier-series and fourier transform
 
 # Licence
 
-This project is licensed under the Creative Commons License. See the `LICENSE` file for more information.
+This project is licensed under the Creative Commons License. <!-- See the `LICENSE` file for more information. -->
 
 <img width="1469" alt="zoomed-fourier" src="https://github.com/gyanantaran/fourier-series/assets/95016059/1f9a1961-4517-4607-b35d-7d241ea2ba20">
 

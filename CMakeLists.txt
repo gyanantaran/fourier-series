@@ -27,6 +27,7 @@ endif()
 
 add_executable(
         ${PROJECT_NAME} 
+        # main.c
         src/sketch.c
         src/cycloid.c
         src/fourier.c

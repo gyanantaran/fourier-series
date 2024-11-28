@@ -9,10 +9,10 @@
 #include "raylib.h"
 
 struct Sketch {
-    Vector2 *vertices;
-    int index;
+  Vector2 *vertices;
+  int index;
 
-    bool connectFirstLast;  //
+  bool connectFirstLast; //
 };
 
 struct Sketch createSketch();
@@ -23,4 +23,4 @@ void drawSketch(struct Sketch *sketch, Color color);
 
 void updateSketch(struct Sketch *mySketch, Vector2 newPoint);
 
-#endif //FOURIER_SERIES_SKETCH_H
+#endif // FOURIER_SERIES_SKETCH_H

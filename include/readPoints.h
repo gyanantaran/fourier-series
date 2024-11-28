@@ -10,4 +10,4 @@
 
 struct Sketch readPointsFile(const char *filename);
 
-#endif //FOURIER_SERIES_READPOINTS_H
+#endif // FOURIER_SERIES_READPOINTS_H

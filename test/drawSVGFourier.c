@@ -4,12 +4,11 @@
 // Note: for bringing everything together and drawing out the fourier series
 // expansion of a sketch
 
-
 #include "../include/constants.h"
 #include "../include/cycloid.h"
+#include "../include/fourier.h"
 #include "../include/readPoints.h"
 #include "../include/sketch.h"
-#include "../include/fourier.h"
 
 #include "raylib.h"
 #include "raymath.h"
@@ -106,17 +105,18 @@ int main(void) {
 }
 
 void drawText() {
-//  DrawText("Fourier Series Project", (int)(0.7 * SCREEN_WIDTH),
-//           (int)(0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
-//  DrawText("Press E to Erase", (int)(0.1 * SCREEN_WIDTH),
-//           (int)(0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+  //  DrawText("Fourier Series Project", (int)(0.7 * SCREEN_WIDTH),
+  //           (int)(0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+  //  DrawText("Press E to Erase", (int)(0.1 * SCREEN_WIDTH),
+  //           (int)(0.1 * SCREEN_HEIGHT), 20, LIGHTGRAY);
   DrawText("Press SPACE to zoom-in/zoom-out", (int)(0.1 * SCREEN_WIDTH),
            (int)(0.05 * SCREEN_HEIGHT), 20, LIGHTGRAY);
-    DrawText(TextFormat("Number of terms/cycloids: %d", NUMBER_CYCLES), (int)(0.1 * SCREEN_WIDTH),
-             (int)(0.10 * SCREEN_HEIGHT), 20, LIGHTGRAY);
+  DrawText(TextFormat("Number of terms/cycloids: %d", NUMBER_CYCLES),
+           (int)(0.1 * SCREEN_WIDTH), (int)(0.10 * SCREEN_HEIGHT), 20,
+           LIGHTGRAY);
   DrawText("Signals and Systems", (int)(0.8 * SCREEN_WIDTH),
            (int)(0.8 * SCREEN_HEIGHT), 20, LIGHTGRAY);
-  DrawText("Student Project", (int)(0.8 * SCREEN_WIDTH),
+  DrawText("Vishal Paudel", (int)(0.8 * SCREEN_WIDTH),
            (int)(0.85 * SCREEN_HEIGHT), 20, LIGHTGRAY);
 }
 
