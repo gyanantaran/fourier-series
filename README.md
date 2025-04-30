@@ -29,6 +29,8 @@ https://github.com/gyanantaran/fourier-series/assets/95016059/6f9a225e-e1a2-41cf
 
 ## Instruction to build the project
 
+### Desktop
+
 Here are the instructions to build and run the project:
 
 Note: this project uses `cmake`, make sure that is installed, the minimum version for `cmake` is specified inside the CMakeLists.txt
@@ -42,6 +44,19 @@ cd ..
 ./build/fourier_series
 ```
 
+### Web
+
+Compiling for the web requires the [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html):
+
+```bash
+mkdir build
+cd build
+emcmake cmake .. -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXECUTABLE_SUFFIX=".html"
+emmake make
+python -m http.server 8080
+```
+
+Then, go to the URL `http://localhost:8080/fourier_series.html`.
 
 
 ## Logs and Bugs
